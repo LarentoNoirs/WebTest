@@ -3,12 +3,101 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Index</title>
+    <title>Список Папок</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+            background: #f9f9f9;
+        }
+
+        .group {
+            display: inline-block;
+            vertical-align: top;
+            margin: 10px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .group h3 {
+            margin-top: 0;
+        }
+
+        button {
+            display: block;
+            margin: 5px 0;
+            padding: 8px 12px;
+            width: 100%;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: 1px solid #888;
+            background-color: #f0f0f0;
+        }
+
+        button:hover {
+            background-color: #e0e0e0;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Добро пожаловать</h1>
-    <p>Это пустой HTML-файл.</p>
+    <h1>Группы Папок</h1>
+    <div id="container">Загрузка...</div>
+
+    <script>
+        // 👇 ВПИШИ СЮДА СВОИ ИМЕНА ПАПОК
+        const folderNames = [
+            "BusStopJam_v1",
+            "SkyBox_v1",
+            "BusStopJam_v2"
+        ];
+
+        const container = document.getElementById("container");
+
+        const groups = {};
+
+        for (const name of folderNames) {
+            const match = name.match(/(.+)_v(\d+)$/);
+            if (!match) continue;
+
+            const base = match[1];
+            const version = parseInt(match[2]);
+
+            if (!groups[base]) groups[base] = [];
+            groups[base].push({ name, version });
+        }
+
+        container.innerHTML = "";
+
+        Object.keys(groups).sort().forEach(base => {
+            const groupDiv = document.createElement("div");
+            groupDiv.className = "group";
+
+            const title = document.createElement("h3");
+            title.textContent = base;
+            groupDiv.appendChild(title);
+
+            const sorted = groups[base].sort((a, b) => a.version - b.version);
+            for (const item of sorted) {
+                const btn = document.createElement("button");
+                btn.textContent = item.name;
+                //btn.onclick = () => alert("Открытие: " + item.name);
+                // 👆 Вместо alert можно вставить переход:
+                btn.onclick = () => window.location.href = item.name + "/";
+                groupDiv.appendChild(btn);
+            }
+
+            container.appendChild(groupDiv);
+        });
+
+        if (container.innerHTML === "") {
+            container.textContent = "Папки не найдены.";
+        }
+    </script>
 </body>
 
 </html>
