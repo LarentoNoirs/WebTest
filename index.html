@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Список Папок</title>
+    <title>Веб билды</title>
     <style>
         body {
             font-family: sans-serif;
@@ -45,7 +45,7 @@
 </head>
 
 <body>
-    <h1>Группы Папок</h1>
+    <h1>Веб билды</h1>
     <div id="container">Загрузка...</div>
 
     <script>
@@ -85,8 +85,6 @@
             for (const item of sorted) {
                 const btn = document.createElement("button");
                 btn.textContent = item.name;
-                //btn.onclick = () => alert("Открытие: " + item.name);
-                // 👆 Вместо alert можно вставить переход:
                 btn.onclick = () => window.location.href = item.name + "/";
                 groupDiv.appendChild(btn);
             }
