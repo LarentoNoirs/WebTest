@@ -1,9 +1,9 @@
 const cacheName = "DefaultCompany-Bus Stop Jam Web-1.1.3";
 const contentToCache = [
     "Build/BusStopJam.loader.js",
-    "Build/BusStopJam.framework.js",
-    "Build/BusStopJam.data",
-    "Build/BusStopJam.wasm",
+    "Build/BusStopJam.framework.js.unityweb",
+    "Build/BusStopJam.data.unityweb",
+    "Build/BusStopJam.wasm.unityweb",
     "TemplateData/style.css"
 
 ];
