@@ -6,50 +6,116 @@
     <title>Веб билды</title>
     <style>
         body {
-            font-family: sans-serif;
-            padding: 20px;
-            background: #f9f9f9;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f5f7;
+            margin: 0;
+            padding: 40px;
+            color: #333;
         }
 
-        .group {
-            display: inline-block;
-            vertical-align: top;
-            margin: 10px;
-            padding: 15px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        #container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
             background: white;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .group h3 {
-            margin-top: 0;
-        }
-
-        button {
-            display: block;
-            margin: 5px 0;
-            padding: 8px 12px;
-            width: 100%;
-            font-size: 14px;
-            cursor: pointer;
             border-radius: 5px;
-            border: 1px solid #888;
-            background-color: #f0f0f0;
+            padding: 16px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-self: start;
+            /* <--- ВОТ ЭТО ДОБАВЛЕНО */
         }
 
-        button:hover {
-            background-color: #e0e0e0;
+        .card-title {
+            font-weight: 600;
+            font-size: 25px;
+            margin-bottom: 6px;
+            color: #2b2b2b;
+        }
+
+        .version-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .version-button {
+            flex: 1;
+            padding: 8px 10px;
+            font-size: 17px;
+            border: none;
+            background: #e0e0e0;
+            /* border-radius: 5px; */
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .version-button:hover {
+            background: #d5d5d5;
+        }
+
+        .info-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .info-btn:hover {
+            color: #666;
+        }
+
+        .tooltip {
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            transform: translateY(-50%);
+            background: #333;
+            color: white;
+            font-size: 13px;
+            padding: 8px 12px;
+            border-radius: 10px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 10;
+            margin-left: 8px;
+        }
+
+        .info-btn.active .tooltip {
+            opacity: 1;
+            transform: translateY(-50%) translateX(5px);
+            pointer-events: auto;
         }
     </style>
 </head>
 
 <body>
+
     <h1>Веб билды</h1>
     <div id="container">Загрузка...</div>
 
     <script>
-        // 👇 ВПИШИ СЮДА СВОИ ИМЕНА ПАПОК
         const folderNames = [
             "SkyBox_v1",
             "BusStopJam_v1",
@@ -58,8 +124,15 @@
             "BusStopJam_v4"
         ];
 
-        const container = document.getElementById("container");
+        const descriptions = {
+            "SkyBox_v1": "Быстрая загрузка скайбокса",
+            "BusStopJam_v1": "Первая сборка: Тест веб билда",
+            "BusStopJam_v2": "Замена моделек на кубы",
+            "BusStopJam_v3": "Фикс бага с серыми секретными моделями и фикс размера кубиков",
+            "BusStopJam_v4": "Добавление задержки движения кубика после нажатия 2000мс"
+        };
 
+        const container = document.getElementById("container");
         const groups = {};
 
         for (const name of folderNames) {
@@ -76,28 +149,58 @@
         container.innerHTML = "";
 
         Object.keys(groups).sort().forEach(base => {
-            const groupDiv = document.createElement("div");
-            groupDiv.className = "group";
+            const card = document.createElement("div");
+            card.className = "card";
 
-            const title = document.createElement("h3");
+            const title = document.createElement("div");
+            title.className = "card-title";
             title.textContent = base;
-            groupDiv.appendChild(title);
+            card.appendChild(title);
 
             const sorted = groups[base].sort((a, b) => a.version - b.version);
             for (const item of sorted) {
+                const row = document.createElement("div");
+                row.className = "version-row";
+
                 const btn = document.createElement("button");
+                btn.className = "version-button";
                 btn.textContent = item.name;
                 btn.onclick = () => window.location.href = item.name + "/";
-                groupDiv.appendChild(btn);
+                row.appendChild(btn);
+
+                if (descriptions[item.name]) {
+                    const info = document.createElement("button");
+                    info.className = "info-btn";
+                    info.innerHTML = "ℹ️";
+
+                    const tooltip = document.createElement("div");
+                    tooltip.className = "tooltip";
+                    tooltip.textContent = descriptions[item.name];
+
+                    info.appendChild(tooltip);
+
+                    info.addEventListener("click", e => {
+                        e.stopPropagation();
+                        document.querySelectorAll(".info-btn").forEach(btn => {
+                            if (btn !== info) btn.classList.remove("active");
+                        });
+                        info.classList.toggle("active");
+                    });
+
+                    row.appendChild(info);
+                }
+
+                card.appendChild(row);
             }
 
-            container.appendChild(groupDiv);
+            container.appendChild(card);
         });
 
-        if (container.innerHTML === "") {
-            container.textContent = "Папки не найдены.";
-        }
+        document.addEventListener("click", () => {
+            document.querySelectorAll(".info-btn").forEach(btn => btn.classList.remove("active"));
+        });
     </script>
+
 </body>
 
 </html>
